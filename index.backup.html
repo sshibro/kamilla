@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#201d18" />
+<title>Камилла · SMM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --beige:#eae7dd;            /* light chips (icon tiles) stay light */
+    --paper:#201d18;            /* washed black background */
+    --white:#ffffff;
+    --taupe:#b8a884;            /* lighter taupe accent on dark */
+    --taupe-dark:#6f6450;       /* icon glyphs on light tiles */
+    --ink:#ece6da;              /* primary light text */
+    --muted:#9f9682;
+    --line:rgba(184,168,142,.17);
+    --ease:cubic-bezier(.16,1,.3,1);        /* smooth expo ease-out */
+    --spring:cubic-bezier(.34,1.2,.5,1);    /* gentle, low-overshoot */
+    --smooth:cubic-bezier(.45,.05,.25,1);   /* symmetric ease for hovers */
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{
+    scroll-behavior:smooth;overflow-x:hidden;
+    -webkit-text-size-adjust:100%;text-size-adjust:100%;
+  }
+  body{
+    font-family:'Manrope',system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.6;
+    overflow-x:hidden;width:100%;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* ---------- film grain ---------- */
+  #grain{
+    position:fixed;inset:-50%;z-index:98;pointer-events:none;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 6s steps(6) infinite;
+  }
+  @keyframes grain{
+    0%{transform:translate(0,0)}10%{transform:translate(-4%,-4%)}30%{transform:translate(3%,-2%)}
+    50%{transform:translate(-2%,4%)}70%{transform:translate(4%,2%)}90%{transform:translate(-3%,-3%)}100%{transform:translate(0,0)}
+  }
+
+  .shell{
+    max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;
+    background:var(--paper);position:relative;overflow:hidden;z-index:1;
+    padding:0 26px;
+  }
+
+  /* soft animated glow behind hero */
+  .aura{
+    position:absolute;top:-40px;left:50%;width:340px;height:340px;border-radius:50%;
+    transform:translateX(-50%);z-index:0;pointer-events:none;filter:blur(70px);opacity:.3;
+    background:radial-gradient(circle at 50% 40%,#8a7d5e 0%,rgba(138,125,94,0) 70%);
+    animation:breathe 9s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{transform:translateX(-50%) scale(1);opacity:.22}50%{transform:translateX(-50%) scale(1.18);opacity:.36}}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:26px 0 0;position:relative;z-index:2;}
+  .mark{font-family:'Unbounded',sans-serif;font-weight:500;font-size:13px;letter-spacing:.06em;}
+  .mark .dot{color:var(--taupe);display:inline-block;animation:blink 2.6s steps(1) infinite;}
+  @keyframes blink{0%,80%{opacity:1}90%{opacity:.2}100%{opacity:1}}
+  .topbar .yr{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);}
+
+  /* ---------- hero ---------- */
+  .hero{padding:84px 0 30px;position:relative;z-index:2;}
+  .kicker{
+    font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--taupe);
+    display:flex;align-items:center;gap:12px;margin-bottom:38px;
+    opacity:0;animation:fadeIn 1.2s var(--ease) .2s forwards;
+  }
+  .kicker::before{content:"";width:0;height:1px;background:var(--taupe);display:inline-block;animation:lineGrow 1.2s var(--ease) .45s forwards;}
+  @keyframes lineGrow{to{width:26px}}
+  @keyframes fadeIn{to{opacity:1}}
+
+  h1{
+    font-family:'Unbounded',sans-serif;font-weight:400;
+    font-size:clamp(38px,13vw,56px);line-height:1.02;letter-spacing:-.02em;color:var(--ink);
+  }
+  h1 em{font-style:normal;color:var(--taupe);font-weight:500;}
+
+  /* masked line reveal */
+  .mask{display:block;overflow:hidden;padding-bottom:.04em;}
+  .mask > span{display:block;transform:translateY(115%) skewY(3deg);will-change:transform;}
+  .hero h1 .mask:nth-child(1) > span{animation:up 1.25s var(--ease) .5s forwards;}
+  .hero h1 .mask:nth-child(2) > span{animation:up 1.25s var(--ease) .66s forwards;}
+  .hero h1 .mask:nth-child(3) > span{animation:up 1.25s var(--ease) .82s forwards;}
+  @keyframes up{to{transform:translateY(0) skewY(0)}}
+
+  .hero .sub{font-size:15px;color:#beb4a1;max-width:330px;margin-top:34px;opacity:0;animation:fadeUp 1.3s var(--ease) 1.05s forwards;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .signature{
+    margin-top:46px;font-family:'Unbounded',sans-serif;font-weight:300;
+    font-size:13px;text-transform:uppercase;color:var(--muted);
+    letter-spacing:.1em;opacity:0;animation:spread 1.4s var(--ease) 1.1s forwards;
+  }
+  @keyframes spread{0%{opacity:0;letter-spacing:.1em}100%{opacity:1;letter-spacing:.5em}}
+
+  /* scroll hint */
+  .scroll-hint{
+    display:flex;align-items:center;gap:9px;margin-top:40px;
+    font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);
+    opacity:0;animation:fadeIn 1s ease 1.5s forwards;
+  }
+  .scroll-hint .bar{width:1px;height:30px;background:var(--line);overflow:hidden;position:relative;}
+  .scroll-hint .bar::after{content:"";position:absolute;top:0;left:0;width:100%;height:40%;background:var(--taupe);animation:slide 2s ease-in-out infinite;}
+  @keyframes slide{0%{transform:translateY(-100%)}100%{transform:translateY(250%)}}
+
+  /* ---------- marquee ---------- */
+  .marquee{
+    overflow:hidden;white-space:nowrap;margin:18px -26px 0;padding:14px 0;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+  }
+  .marquee .track{display:inline-block;animation:scrollX 34s linear infinite;will-change:transform;}
+  .marquee span{
+    font-family:'Unbounded',sans-serif;font-weight:400;font-size:14px;
+    letter-spacing:.04em;color:var(--ink);margin:0 4px;
+  }
+  .marquee b{color:var(--taupe);margin:0 14px;font-weight:400;}
+  @keyframes scrollX{to{transform:translateX(-50%)}}
+
+  /* ---------- divider that draws in ---------- */
+  .rule{height:1px;background:var(--line);transform:scaleX(0);transform-origin:left;transition:transform 1.4s var(--ease);}
+  .rule.in{transform:scaleX(1);}
+
+  /* ---------- generic section ---------- */
+  .block{padding:44px 0;position:relative;z-index:2;}
+  .label{
+    font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted);margin-bottom:30px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .label::before{content:"";width:18px;height:1px;background:var(--taupe);display:inline-block;}
+  .block h2{
+    font-family:'Unbounded',sans-serif;font-weight:400;
+    font-size:clamp(24px,7vw,32px);line-height:1.14;letter-spacing:-.01em;margin-bottom:20px;
+  }
+  .block h2 em{font-style:normal;color:var(--taupe);}
+  .prose p{font-size:15px;color:#cabfa9;margin-top:18px;}
+  .prose p.big{font-size:17px;color:var(--ink);font-weight:500;margin-top:24px;position:relative;padding-left:16px;}
+  .prose p.big::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--taupe);}
+  .prose p:first-child{margin-top:0;}
+
+  /* ---------- photo frame ---------- */
+  .figure{position:relative;}
+  /* offset accent frame behind the photo (editorial double-frame) */
+  .framewrap{position:relative;}
+  .framewrap::before{
+    content:"";position:absolute;inset:0;z-index:0;border-radius:10px;
+    border:1px solid var(--taupe);opacity:0;transform:translate(0,0);
+    transition:transform 1s var(--ease) .25s,opacity 1s var(--ease) .25s;
+  }
+  .framewrap:has(.frame.in)::before{opacity:.4;transform:translate(13px,13px);}
+  /* circle: turn the accent into a rotating dashed ring */
+  .framewrap:has(.frame.circle)::before{inset:-9px;border-radius:50%;border:1.5px dashed var(--taupe);animation:spin 30s linear infinite;}
+  .framewrap:has(.frame.circle.in)::before{opacity:.45;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .frame{
+    position:relative;z-index:1;width:100%;border-radius:10px;overflow:hidden;
+    background:radial-gradient(130% 130% at 22% 8%,#fcfaf5 0%,var(--beige) 42%,#d6cdba 100%);
+    border:1px solid rgba(145,132,108,.4);
+    box-shadow:0 32px 60px -34px rgba(145,132,108,.85);
+    clip-path:inset(0 0 100% 0);
+    transition:clip-path 1.2s var(--ease),box-shadow .6s,transform .6s var(--ease);
+  }
+  .frame.in{clip-path:inset(0 0 0% 0);}
+  @media(hover:hover){.frame:hover{box-shadow:0 42px 70px -30px rgba(145,132,108,.95);transform:translateY(-4px);}}
+  .frame.portrait{aspect-ratio:4/5;}
+  .frame.wide{aspect-ratio:3/2;}
+  .frame.square{aspect-ratio:1/1;border-radius:18px;}
+  /* circle shape — reveals with a scale+fade instead of a wipe */
+  .frame.circle{
+    aspect-ratio:1/1;border-radius:50%;clip-path:none;opacity:0;transform:scale(.9);
+    transition:opacity .9s var(--ease),transform 1.1s var(--spring),box-shadow .6s;
+  }
+  .frame.circle.in{opacity:1;transform:scale(1);}
+  @media(hover:hover){.frame.circle:hover{transform:scale(1.03);}}
+  .frame .inner{position:absolute;inset:0;transition:transform .3s linear;will-change:transform;}
+  .frame img{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.12);transition:transform 1.4s var(--ease);}
+  .frame.in img{transform:scale(1);}
+  /* fine dotted texture inside the placeholder */
+  .frame .inner::before{
+    content:"";position:absolute;inset:0;opacity:.55;pointer-events:none;
+    background-image:radial-gradient(rgba(145,132,108,.18) 1px,transparent 1.5px);background-size:15px 15px;
+  }
+  .frame .ph{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:16px;color:var(--taupe);z-index:1;
+  }
+  .frame .ph .badge{
+    width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.55);border:1px solid rgba(145,132,108,.3);
+    box-shadow:0 12px 26px -14px rgba(145,132,108,.85);animation:floaty 5s ease-in-out infinite;
+  }
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .frame .ph span{font-size:10px;letter-spacing:.34em;text-transform:uppercase;opacity:.75;}
+  /* corner ticks */
+  .corner{position:absolute;width:15px;height:15px;z-index:2;border:0 solid var(--taupe-dark);opacity:.55;}
+  .corner.tl{top:13px;left:13px;border-top-width:1.5px;border-left-width:1.5px;}
+  .corner.tr{top:13px;right:13px;border-top-width:1.5px;border-right-width:1.5px;}
+  .corner.bl{bottom:13px;left:13px;border-bottom-width:1.5px;border-left-width:1.5px;}
+  .corner.br{bottom:13px;right:13px;border-bottom-width:1.5px;border-right-width:1.5px;}
+  /* caption under the frame */
+  .cap{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:11px;letter-spacing:.06em;color:var(--muted);}
+  .cap::before{content:"";width:18px;height:1px;background:var(--taupe);}
+  /* shimmer sweep */
+  .frame .shine{position:absolute;top:0;left:-60%;width:50%;height:100%;z-index:3;pointer-events:none;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);}
+  .frame.in .shine{animation:sweep 1.6s var(--ease) .7s;}
+  @keyframes sweep{to{left:130%}}
+
+  /* ---------- approach / help list ---------- */
+  .list{margin-top:6px;}
+  .item{display:flex;align-items:baseline;gap:18px;padding:24px 0;border-top:1px solid var(--line);transition:background .6s var(--smooth),padding-left .6s var(--smooth);}
+  .item:last-child{border-bottom:1px solid var(--line);}
+  @media(hover:hover){.item:hover{padding-left:12px;background:linear-gradient(90deg,rgba(145,132,108,.07),transparent);}}
+  .item .idx{
+    font-family:'Unbounded',sans-serif;font-weight:300;font-size:12px;
+    color:var(--taupe);min-width:30px;letter-spacing:.04em;transition:transform .65s var(--spring),color .5s var(--smooth);
+  }
+  @media(hover:hover){.item:hover .idx{transform:translateY(-3px) scale(1.15);}}
+  .item .txt h3{font-family:'Unbounded',sans-serif;font-weight:400;font-size:18px;color:var(--ink);}
+  .item .txt p{font-size:13.5px;color:#aaa08c;margin-top:6px;}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    position:relative;overflow:hidden;
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:'Unbounded',sans-serif;font-weight:400;font-size:13px;letter-spacing:.02em;
+    color:var(--paper);background:var(--ink);
+    padding:16px 26px;border-radius:100px;text-decoration:none;border:none;cursor:pointer;
+    margin-top:30px;transition:transform .6s var(--spring),color .5s var(--smooth),box-shadow .6s var(--smooth);
+    box-shadow:0 14px 30px -16px rgba(184,168,142,.45);
+  }
+  .btn span,.btn svg{position:relative;z-index:1;}
+  .btn::before{content:"";position:absolute;inset:0;z-index:0;background:var(--taupe-dark);transform:translateY(101%);transition:transform .7s var(--ease);}
+  .btn:active{transform:translateY(-1px) scale(.98);}
+  .btn svg{transition:transform .6s var(--spring);}
+  @media(hover:hover){
+    .btn:hover::before{transform:translateY(0);}
+    .btn:hover{transform:translateY(-4px);color:var(--beige);box-shadow:0 22px 40px -16px rgba(184,168,142,.6);}
+    .btn:hover svg{transform:translateX(6px);}
+  }
+
+  /* ---------- socials ---------- */
+  .contact{padding:66px 0 30px;position:relative;z-index:2;}
+  .contact h2{font-family:'Unbounded',sans-serif;font-weight:400;font-size:clamp(28px,9vw,38px);line-height:1.05;letter-spacing:-.02em;}
+  .contact h2 em{font-style:normal;color:var(--taupe);}
+  .contact .sub{font-size:14.5px;color:#beb4a1;margin:22px 0 38px;max-width:300px;}
+  .socials{display:flex;flex-direction:column;}
+  .social{
+    position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 2px;border-top:1px solid var(--line);
+    text-decoration:none;color:var(--ink);transition:padding .65s var(--smooth),color .5s var(--smooth);
+  }
+  .social:last-child{border-bottom:1px solid var(--line);}
+  .social::before{content:"";position:absolute;left:0;bottom:0;height:100%;width:100%;z-index:0;
+    background:linear-gradient(90deg,rgba(145,132,108,.1),transparent);transform:translateX(-101%);transition:transform .8s var(--ease);}
+  @media(hover:hover){
+    .social:hover::before{transform:translateX(0);}
+    .social:hover{padding-left:18px;color:var(--taupe-dark);}
+  }
+  .social .left,.social .go{position:relative;z-index:1;}
+  .social .left{display:flex;align-items:center;gap:14px;min-width:0;}
+  .social .go{flex:none;}
+  /* unified white/beige glass icon tiles */
+  .social .ic{
+    position:relative;overflow:hidden;
+    width:44px;height:44px;border-radius:14px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--taupe-dark);
+    background:linear-gradient(150deg,#f6f2ea,#e3ddce);
+    border:1px solid rgba(145,132,108,.32);
+    box-shadow:0 10px 20px -12px rgba(145,132,108,.8),inset 0 1px 0 rgba(255,255,255,.85);
+    transition:transform .7s var(--spring),box-shadow .6s var(--smooth),background .6s var(--smooth),color .6s var(--smooth);
+  }
+  /* glossy "filter" sheen on top of every icon */
+  .social .ic::after{
+    content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+    background:linear-gradient(155deg,rgba(255,255,255,.6),rgba(255,255,255,0) 48%);
+    mix-blend-mode:screen;
+  }
+  .social .ic svg{position:relative;z-index:1;width:22px;height:22px;}
+  .social .ic img.glyph{position:relative;z-index:1;width:25px;height:25px;object-fit:contain;transition:filter .6s var(--smooth);}
+  /* hover: tile flips to taupe, glyph to white (only on real hover devices) */
+  @media(hover:hover){
+    .social:hover .ic img.glyph{filter:brightness(0) invert(1);}
+    .social:hover .ic{
+      transform:scale(1.1) rotate(-4deg);color:#fff;
+      background:linear-gradient(150deg,var(--taupe),var(--taupe-dark));
+      box-shadow:0 16px 26px -12px rgba(145,132,108,.95),inset 0 1px 0 rgba(255,255,255,.25);
+    }
+  }
+  .social .nm{font-family:'Unbounded',sans-serif;font-weight:400;font-size:clamp(16px,5vw,20px);white-space:nowrap;display:flex;align-items:baseline;gap:6px;}
+  .social .nm sup{font-size:10px;color:var(--taupe);}
+  .social .go{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);}
+  .social .go svg{transition:transform .6s var(--spring);}
+  @media(hover:hover){.social:hover .go svg{transform:translate(5px,-5px);}}
+
+  .legal{font-size:10.5px;color:#a39c8a;line-height:1.55;margin-top:34px;}
+  .legal sup{color:var(--taupe);}
+
+  footer{
+    display:flex;flex-direction:column;align-items:center;gap:11px;text-align:center;
+    padding:32px 0 46px;margin-top:30px;border-top:1px solid var(--line);
+    position:relative;z-index:2;
+  }
+  footer .dev{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe);
+    text-decoration:none;transition:color .3s,letter-spacing .4s var(--ease);
+  }
+  footer .dev b{font-family:'Unbounded',sans-serif;font-weight:500;color:var(--taupe);transition:color .3s;}
+  @media(hover:hover){
+    footer .dev:hover{color:var(--ink);letter-spacing:.24em;}
+    footer .dev:hover b{color:var(--ink);}
+  }
+  footer .meta{font-size:11px;letter-spacing:.06em;color:var(--muted);}
+  footer .meta b{font-family:'Unbounded',sans-serif;font-weight:400;color:var(--taupe);}
+
+  /* ---------- reveal (smooth, gentle focus-in) ---------- */
+  .reveal{
+    opacity:0;transform:translateY(30px) scale(.99);filter:blur(4px);
+    transition:opacity 1.25s var(--ease),transform 1.35s var(--ease),filter 1.15s var(--ease);
+    will-change:transform,opacity,filter;
+  }
+  .reveal.in{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}
+  /* gentle slide-in from the left */
+  .reveal.left{transform:translateX(-34px) translateY(12px) rotate(-1.5deg);}
+  .reveal.left.in{transform:none;}
+  /* soft zoom */
+  .reveal.zoom{transform:scale(.9);}
+  .reveal.zoom.in{transform:scale(1);}
+  /* subtle 3D lift from below */
+  .reveal.flip{opacity:0;transform:perspective(1200px) rotateX(14deg) translateY(30px);transform-origin:50% 100%;filter:blur(4px);}
+  .reveal.flip.in{opacity:1;filter:blur(0);transform:perspective(1200px) rotateX(0) translateY(0);}
+  /* gentle drop from above */
+  .reveal.drop{transform:translateY(-26px) scale(.995);}
+  .reveal.drop.in{transform:none;}
+  .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+  .d5{transition-delay:.5s}.d6{transition-delay:.6s}
+  @media (prefers-reduced-motion:reduce){
+    .reveal,.frame,.rule{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important;}
+    *{animation:none!important;}
+  }
+</style>
+</head>
+<body>
+<div id="grain"></div>
+
+<div class="shell">
+  <div class="aura"></div>
+
+  <div class="topbar">
+    <span class="mark">Kamilla<span class="dot">.</span></span>
+    <span class="yr">SMM — 2026</span>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="kicker">SMM-специалист</div>
+    <h1>
+      <span class="mask"><span>Соцсети,</span></span>
+      <span class="mask"><span>которые</span></span>
+      <span class="mask"><span><em>работают.</em></span></span>
+    </h1>
+    <p class="sub">Помогаю локальному бизнесу превращать соцсети в инструмент роста — через стратегию, контент и сильную упаковку.</p>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee">
+    <div class="track">
+      <span>Стратегия</span><b>✦</b><span>Контент</span><b>✦</b><span>Упаковка</span><b>✦</b><span>Продвижение</span><b>✦</b><span>Аналитика</span><b>✦</b>
+      <span>Стратегия</span><b>✦</b><span>Контент</span><b>✦</b><span>Упаковка</span><b>✦</b><span>Продвижение</span><b>✦</b><span>Аналитика</span><b>✦</b>
+    </div>
+  </div>
+
+  <!-- ЗНАКОМСТВО -->
+  <section class="block">
+    <div class="label reveal drop">Знакомство</div>
+    <figure class="figure" style="margin-bottom:40px;">
+      <div class="framewrap">
+        <div class="frame circle">
+          <span class="shine"></span>
+          <div class="inner" data-parallax="16">
+            <img src="img/1.jpg" alt="Камилла — SMM-специалист из Кисловодска" style="object-position:50% 26%" decoding="async" onerror="this.remove()">
+            <div class="ph">
+              <span class="badge"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 17l5-6 4 4 3-3 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8" r="1.8" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/></svg></span>
+              <span>Фото</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </figure>
+    <h2 class="reveal flip">Привет, я <em>Камилла!</em></h2>
+    <div class="prose">
+      <p class="reveal d1">Я из Кисловодска — города гор, солнца и вдохновения.</p>
+      <p class="reveal d1">По профессии я технолог, но однажды маркетинг стал тем делом, в котором я нашла себя.</p>
+      <p class="reveal d2">Долгое время я работала за кадром своих проектов: создавала, развивала, упаковывала и искала тот самый способ сделать их заметнее. А теперь выхожу в личный бренд.</p>
+      <p class="big reveal d2">Контент, характер и немного магии.</p>
+      <p class="reveal d3">Помогаю локальному бизнесу превращать соцсети в инструмент роста — создавать живые бренды, которые заметны, узнаваемы и находят своих людей.</p>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- МОЙ ПОДХОД -->
+  <section class="block">
+    <div class="label reveal drop">Мой подход к работе</div>
+    <p class="prose reveal d1" style="margin-bottom:24px;font-size:15px;color:#cabfa9;">Глубокий анализ, поиск точек роста и искренняя вовлечённость в каждый проект для достижения максимального эффекта.</p>
+    <div class="list">
+      <div class="item reveal left d1"><span class="idx">01</span><div class="txt"><h3>Анализ</h3><p>Детальный разбор ЦА и конкурентов для точного позиционирования.</p></div></div>
+      <div class="item reveal left d2"><span class="idx">02</span><div class="txt"><h3>Креативный контент</h3><p>Визуал и тексты, которые цепляют и вовлекают аудиторию.</p></div></div>
+      <div class="item reveal left d3"><span class="idx">03</span><div class="txt"><h3>Стратегия роста</h3><p>Планы развития, ведущие к стабильным продажам и лояльности.</p></div></div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ИСТОРИЯ ПРОЕКТА / КЕЙС -->
+  <section class="block">
+    <div class="label reveal drop">Кейс</div>
+    <h2 class="reveal flip">История проекта <em>с характером</em></h2>
+    <figure class="figure" style="margin:6px 0 30px;">
+      <div class="framewrap">
+        <div class="frame square">
+          <span class="shine"></span>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="inner" data-parallax="22">
+            <img src="img/3.jpg" alt="Кейс — образ и стиль бренда" style="object-position:50% 16%" decoding="async" onerror="this.remove()">
+            <div class="ph">
+              <span class="badge"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 17l5-6 4 4 3-3 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8" r="1.8" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/></svg></span>
+              <span>Фото кейса</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </figure>
+    <div class="prose">
+      <p class="reveal d1">За каждым сильным брендом стоит история.</p>
+      <p class="reveal d1">В этом кейсе не просто контент и визуал, а путь создания образа, атмосферы и доверия вокруг проекта.</p>
+      <p class="reveal d2">Показываю, как стратегия, упаковка и контент помогают бизнесу становиться заметным, узнаваемым и находить своих людей.</p>
+      <p class="big reveal d2">Кейс — по запросу.</p>
+    </div>
+    <a href="https://t.me/faalseee?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BF%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80%D0%B5%D1%82%D1%8C%20%D0%BA%D0%B5%D0%B9%D1%81" target="_blank" rel="noopener" class="btn reveal d3"><span>Получить кейс</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- КАК ПОМОГУ -->
+  <section class="block">
+    <div class="label reveal drop">Чем помогу</div>
+    <h2 class="reveal flip">Как я могу помочь <em>вашему бизнесу?</em></h2>
+    <p class="prose reveal d1" style="margin:20px 0 8px;font-size:15px;color:#cabfa9;">Помогаю локальному бизнесу становиться заметнее через стратегию, контент и сильную упаковку.</p>
+    <div class="list">
+      <div class="item reveal left d1"><span class="idx">01</span><div class="txt"><h3>Упаковать ваш проект</h3><p>Привести соцсети к единому стилю, раскрыть ценность бренда и показать его характер.</p></div></div>
+      <div class="item reveal left d2"><span class="idx">02</span><div class="txt"><h3>Создать контент, который работает</h3><p>Идеи, сценарии, тексты и визуал, которые помогают привлекать внимание и вызывать доверие.</p></div></div>
+      <div class="item reveal left d3"><span class="idx">03</span><div class="txt"><h3>Выстроить продвижение</h3><p>Разобраться, что показывать аудитории, как рассказывать о продукте и превращать подписчиков в клиентов.</p></div></div>
+      <div class="item reveal left d4"><span class="idx">04</span><div class="txt"><h3>Вести соцсети под ключ</h3><p>От стратегии и контент-плана до публикаций и анализа результатов.</p></div></div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ПРОДОЛЖИМ ЗНАКОМСТВО -->
+  <section class="block">
+    <div class="label reveal drop">Продолжим знакомство</div>
+    <figure class="figure" style="margin:0 0 34px;">
+      <div class="framewrap">
+        <div class="frame portrait">
+          <span class="shine"></span>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="inner" data-parallax="20">
+            <img src="img/2.jpg" alt="Камилла — индивидуальный подход к каждому проекту" style="object-position:50% 22%" decoding="async" onerror="this.remove()">
+            <div class="ph">
+              <span class="badge"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 17l5-6 4 4 3-3 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8" r="1.8" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/></svg></span>
+              <span>Фото</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </figure>
+    <div class="prose">
+      <p class="big reveal" style="margin-top:0;">Я не работаю по шаблону.</p>
+      <p class="reveal d1">Каждый проект — это отдельная история со своим характером, задачами и точками роста.</p>
+      <p class="reveal d1">Поэтому формат сотрудничества я подбираю индивидуально: погружаюсь в бизнес, изучаю аудиторию и нахожу решение, которое поможет бренду стать заметнее.</p>
+      <p class="reveal d2">Мой подход — не просто создать красивый контент, а раскрыть идею проекта, усилить его образ и выстроить коммуникацию с людьми.</p>
+      <p class="reveal d2">Если вам откликается — расскажите о своём проекте.</p>
+    </div>
+    <a href="https://t.me/faalseee?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82" target="_blank" rel="noopener" class="btn reveal d3"><span>Обсудить проект</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </section>
+
+  <!-- КОНТАКТЫ / СОЦСЕТИ -->
+  <section class="contact" id="contact">
+    <div class="label reveal drop">Контакты</div>
+    <h2 class="reveal flip">Будем<br><em>на связи</em></h2>
+    <p class="sub reveal d1">Выберите удобный мессенджер — отвечу в течение дня.</p>
+
+    <div class="socials">
+      <a href="https://t.me/faalseee" target="_blank" rel="noopener" class="social reveal d1">
+        <span class="left"><span class="ic tg"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.6 18.9 19.2c-.23 1.02-.84 1.27-1.7.79l-4.7-3.47-2.27 2.18c-.25.25-.46.46-.95.46l.34-4.8 8.73-7.9c.38-.34-.08-.53-.59-.19l-10.8 6.8-4.65-1.46c-1.01-.32-1.03-1.01.21-1.5l18.18-7c.84-.31 1.58.2 1.31 1.5Z"/></svg></span><span class="nm">Telegram</span></span>
+        <span class="go"><span class="go-l">Открыть</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+      <a href="https://wa.me/79324131666" target="_blank" rel="noopener" class="social reveal d2">
+        <span class="left"><span class="ic wa"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.9c0 1.76.46 3.45 1.34 4.95L2 22l5.3-1.39a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.9 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.13a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.1.81.83-3.02-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.83 2.41a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.8-.23-.09-.39-.13-.56.12-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.42l-.48-.01c-.16 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.16 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></span><span class="nm">WhatsApp</span></span>
+        <span class="go"><span class="go-l">Открыть</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+      <a href="https://max.ru/u/f9LHodD0cOJsV-2Yt5X5XoZFP6lvKvFOk3A8a9Y1G4GK1nKauGdJsYWpR3M" target="_blank" rel="noopener" class="social reveal d3">
+        <span class="left"><span class="ic"><img src="logo/max-beige.png" class="glyph" alt="Max" loading="lazy" decoding="async"></span><span class="nm">Max</span></span>
+        <span class="go"><span class="go-l">Открыть</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+      <a href="https://www.instagram.com/613022_/" target="_blank" rel="noopener" class="social reveal d4">
+        <span class="left"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="12" r="4.1" stroke="currentColor" stroke-width="1.9"/><circle cx="17.1" cy="6.9" r="1.25" fill="currentColor"/></svg></span><span class="nm">Instagram<sup>*</sup></span></span>
+        <span class="go"><span class="go-l">Открыть</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </a>
+    </div>
+
+    <p class="legal reveal"><sup>*</sup> Организация Meta Platforms Inc., а также её социальные сети Facebook и Instagram признаны экстремистскими и запрещены на территории РФ.</p>
+  </section>
+
+  <footer>
+    <a class="dev" href="https://threeit.ru" target="_blank" rel="noopener" title="Разработка сайтов и веб-приложений — ThreeIT (threeit.ru)">Разработано <b>ThreeIT</b></a>
+    <span class="meta">© 2026 · <b>Kamilla</b> · SMM</span>
+  </footer>
+</div>
+
+<script>
+  // Scroll reveals — each element animates in ONCE, the first time it enters the
+  // viewport, then stays revealed forever (no repeated animation on scroll-up).
+  const revealEls = [...document.querySelectorAll('.reveal,.frame,.rule')];
+  const px = [...document.querySelectorAll('[data-parallax]')];
+  let ticking = false;
+
+  function frame(){
+    const vh = window.innerHeight;
+    // reveal once, then drop from the list so it never re-triggers
+    for(let i=revealEls.length-1;i>=0;i--){
+      const r = revealEls[i].getBoundingClientRect();
+      if(r.top < vh*0.88 && r.bottom > 0){ revealEls[i].classList.add('in'); revealEls.splice(i,1); }
+    }
+    // depth parallax inside photo frames
+    px.forEach(el=>{
+      const r = el.getBoundingClientRect();
+      const offset = ((r.top + r.height/2) - vh/2) / vh;
+      const amt = parseFloat(el.dataset.parallax) || 18;
+      el.style.transform = 'translateY(' + (offset*amt).toFixed(1) + 'px) scale(1.08)';
+    });
+    ticking = false;
+  }
+  function onScroll(){ if(!ticking){ ticking = true; requestAnimationFrame(frame); } }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll, {passive:true});
+  window.addEventListener('load', frame);
+  frame();
+</script>
+</body>
+</html>
