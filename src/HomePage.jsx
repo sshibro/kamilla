@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import OptimizedImage from './OptimizedImage.jsx'
 import useHomeMotion from './useHomeMotion.js'
 
@@ -101,10 +101,15 @@ function Button({ href, children, variant = 'solid', arrow = false, className = 
 }
 
 function Words({ text, offset = 0 }) {
+  // Spaces must live outside .w. That span is inline-block + overflow:hidden,
+  // which collapses/clips trailing whitespace and jammed the Russian headline.
   return text.split(' ').map((word, index) => (
-    <span className="w" key={`${word}-${index}`}>
-      <i style={{ '--i': offset + index }}>{word}</i>{' '}
-    </span>
+    <Fragment key={`${word}-${index}`}>
+      {index > 0 ? ' ' : null}
+      <span className="w">
+        <i style={{ '--i': offset + index }}>{word}</i>
+      </span>
+    </Fragment>
   ))
 }
 
@@ -269,7 +274,9 @@ export default function HomePage() {
             <span className="qm" aria-hidden="true">“</span>
             <p data-split>
               <Words text="Пересоберу ваш SMM на фундаменте бизнес-логики. Соцсети начнут" />
+              {' '}
               <em><Words text="приносить деньги," offset={8} /></em>
+              {' '}
               <Words text="а не убытки." offset={10} />
             </p>
             <div className="sig">Камилла · SMM-технолог</div>

@@ -400,6 +400,8 @@ h1 .ital{padding-left:.06em;}
   color:var(--d-strong);
 }
 .manifesto-copy p em{font-style:italic;color:var(--brick-2);}
+/* inline-block + overflow:hidden is the word-reveal mask. Do not put
+   word spaces inside .w — trailing whitespace is discarded and clipped. */
 .w{display:inline-block;overflow:hidden;vertical-align:top;}
 .w>i{
   display:inline-block;font-style:inherit;
