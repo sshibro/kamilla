@@ -221,7 +221,7 @@ section{position:relative;z-index:2;}
 /* ============================================================
    HERO — type over paper, photograph allowed to be a photograph
    ============================================================ */
-.hero{position:relative;padding:calc(78px + env(safe-area-inset-top)) 0 0;}
+.hero{position:relative;padding:calc(78px + env(safe-area-inset-top)) 0 28px;}
 .hero-in{position:relative;}
 
 @keyframes fadeIn{to{opacity:1}}
@@ -325,7 +325,10 @@ h1 .ital{padding-left:.06em;}
   opacity:0;animation:fadeUp .9s var(--ease) .76s forwards;
 }
 .hero-meta{
-  display:flex;align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap;
+  /* phone: the rule + «работаю с локальным бизнесом» sit under the services
+     CTA and leave a dead cream gap before the dark manifesto */
+  display:none;
+  align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap;
   margin-top:30px;padding-top:18px;border-top:1px solid var(--line);
   font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--t-mute);
   opacity:0;animation:fadeIn .9s ease .94s forwards;
@@ -904,7 +907,7 @@ h2 .ln{display:block;}
   body{font-size:16.5px;}
   .hero{padding-top:calc(86px + env(safe-area-inset-top));}
   .hero-actions{flex-direction:row;flex-wrap:wrap;}
-  .hero-meta{font-size:10.5px;letter-spacing:.2em;}
+  .hero-meta{display:flex;font-size:10.5px;letter-spacing:.2em;}
   .hero-meta .down{display:inline-flex;}
   .hero-actions .btn{flex:0 0 auto;}
   .hero-shot{aspect-ratio:5/4.2;}
